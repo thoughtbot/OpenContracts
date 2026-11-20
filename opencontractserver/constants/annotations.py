@@ -133,6 +133,12 @@ PDF_OUTLINE_FIRST_WORD_PREFILTER_RATIO = 0.6
 # malformed/cyclic data.
 PDF_OUTLINE_WALK_ITEM_MULTIPLIER = 4
 
+# --------------------------------------------------------------------------- #
+# Hub client enrichment (HubClientEnricher)                                   #
+# --------------------------------------------------------------------------- #
+# Label on the highlights HubClientEnricher emits where a Hub client is named.
+HUB_CLIENT_LABEL = "HUB_CLIENT"
+
 # Maximum number of document relationships returned in a single query.
 # Set high to accommodate Table of Contents hierarchies.
 DOCUMENT_RELATIONSHIP_QUERY_MAX_LIMIT = 500
