@@ -8,6 +8,7 @@ document text is sent to Hub.
 """
 
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import ClassVar
 
@@ -36,6 +37,13 @@ from opencontractserver.utils.pdf_token_matching import (
 )
 
 logger = logging.getLogger(__name__)
+
+_EDGE_PUNCTUATION = re.compile(r"^\W+|\W+$")
+
+
+def _match_key(word: str) -> str:
+    """Fold a word for matching: ignore case and punctuation at either end."""
+    return _EDGE_PUNCTUATION.sub("", word.casefold())
 
 
 class HubClientEnricher(BaseEnricher):
@@ -133,8 +141,8 @@ class HubClientEnricher(BaseEnricher):
         candidates = []
         for client in clients:
             for name in (client["legal_name"], client["name"]):
-                words = (name or "").casefold().split()
-                if words:
+                words = [_match_key(word) for word in (name or "").split()]
+                if any(words):
                     candidates.append((words, client))
         candidates.sort(key=lambda candidate: len(candidate[0]), reverse=True)
 
@@ -142,7 +150,7 @@ class HubClientEnricher(BaseEnricher):
         pawls_pages = export_data.get("pawls_file_content") or []
         for page_index, page in enumerate(pawls_pages):
             token_texts, original_indices = page_text_tokens(page)
-            folded_texts = [text.casefold() for text in token_texts]
+            folded_texts = [_match_key(text) for text in token_texts]
             claimed: set[int] = set()
             for words, client in candidates:
                 for start in range(len(token_texts) - len(words) + 1):

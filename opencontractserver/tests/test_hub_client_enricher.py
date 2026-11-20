@@ -625,3 +625,50 @@ class HubClientEnricherTests(TestCase):
             [(a["rawText"], a["link_url"]) for a in result["labelled_text"]],
             [("Initech", "https://hub.thoughtbot.com/clients/initech")],
         )
+
+    def test_match_ignores_punctuation_around_the_words(self):
+        export = {
+            "pawls_file_content": [
+                _pawls_page(
+                    [
+                        "between",
+                        "Acme",
+                        "Corporation,",
+                        "a",
+                        "Delaware",
+                        "company",
+                        '("Acme")',
+                    ]
+                )
+            ],
+            "labelled_text": [],
+        }
+        hub_clients = _FakeResponse(
+            payload={
+                "clients": [
+                    {
+                        "id": 3,
+                        "name": "Acme",
+                        "legal_name": "Acme Corporation",
+                        "slug": "acme",
+                        "url": "https://hub.thoughtbot.com/clients/acme",
+                    }
+                ],
+                "meta": {
+                    "page": 1,
+                    "per_page": 100,
+                    "total_pages": 1,
+                    "total_count": 1,
+                },
+            }
+        )
+
+        with patch("requests.get", return_value=hub_clients):
+            result = HubClientEnricher().enrich_document(
+                1, 1, cast(OpenContractDocExport, export), hub_token="hub_token"
+            )
+
+        self.assertEqual(
+            [a["rawText"] for a in result["labelled_text"]],
+            ["Acme Corporation,", '("Acme")'],
+        )
