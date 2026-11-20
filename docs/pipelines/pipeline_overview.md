@@ -111,7 +111,7 @@ Current implementations:
 
 Enrichers inherit from [`BaseEnricher`](../../opencontractserver/pipeline/base/enricher.py) and implement `_enrich_document_impl`. An enricher is a **chainable transform** over a parsed document's `OpenContractDocExport`: it runs at ingest time, between a parser's `parse_document()` and `save_parsed_data()`, and one or more enrichers compose in sequence (each receives the previous one's output). Enrichment is additive and non-fatal — a failing enricher is skipped and never blocks ingestion.
 
-Enrichers are configured per MIME type as an **ordered list** via `PipelineSettings.preferred_enrichers` (empty by default, so enrichment is strictly opt-in).
+Enrichers are configured per MIME type as an **ordered list** via `PipelineSettings.preferred_enrichers` (empty by default, so enrichment is strictly opt-in). When `enabled_components` is a non-empty list, an assigned enricher that is missing from it is skipped without a log line (`PipelineSettings.get_preferred_enrichers`), so turn the enricher on in the Component Library too.
 
 Current implementations:
 
