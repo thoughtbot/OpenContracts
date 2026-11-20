@@ -117,17 +117,19 @@ class HubClientEnricher(BaseEnricher):
                     doc_id,
                 )
                 return export_data
-            if response.status_code == 401:
+            if response.status_code in (401, 403):
                 logger.warning(
-                    "HubClientEnricher: Hub rejected the token (HTTP 401); doc %s "
+                    "HubClientEnricher: Hub rejected the token (HTTP %s); doc %s "
                     "gets no Hub client highlights.",
+                    response.status_code,
                     doc_id,
                 )
                 return export_data
-            if response.status_code == 403:
+            if response.status_code != 200:
                 logger.warning(
-                    "HubClientEnricher: Hub rejected the token (HTTP 403); doc %s "
-                    "gets no Hub client highlights.",
+                    "HubClientEnricher: Hub answered HTTP %s; doc %s gets no Hub "
+                    "client highlights.",
+                    response.status_code,
                     doc_id,
                 )
                 return export_data

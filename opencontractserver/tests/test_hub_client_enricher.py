@@ -478,6 +478,26 @@ class HubClientEnricherEndToEndTests(TransactionTestCase):
         )
         self.assertNotIn("hub_personal_token", output)
 
+    def test_hub_server_error_completes_without_highlights_and_logs_why(self):
+        self._use_words_pdf_parser()
+        self._admin_configures_hub_enricher(token="hub_personal_token")
+        uploader = User.objects.create_user(username="uploader", password="pw")
+        client = Client(schema, context_value=_TestContext(uploader))
+        corpus = self._corpus_owned_by(uploader)
+        unavailable = _FakeResponse(status_code=503, payload={"error": "down"})
+
+        with patch("requests.get", return_value=unavailable), self.assertLogs(
+            level="INFO"
+        ) as logs:
+            document = self._upload_and_read(client, corpus)
+
+        self.assertEqual(document["processingStatus"], "COMPLETED")
+        self.assertFalse(document["backendLock"])
+        self.assertEqual(self._hub_highlights(document), [])
+        output = "\n".join(logs.output)
+        self.assertIn("HubClientEnricher: Hub answered HTTP 503", output)
+        self.assertNotIn("hub_personal_token", output)
+
 
 class HubClientEnricherTests(TestCase):
     """Behaviour of ``enrich_document`` over a hand-built export, Hub stubbed."""
