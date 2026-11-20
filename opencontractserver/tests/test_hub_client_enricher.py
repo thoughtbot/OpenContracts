@@ -576,3 +576,52 @@ class HubClientEnricherTests(TestCase):
             [(a["rawText"], a["link_url"]) for a in result["labelled_text"]],
             [("ACME", "https://hub.thoughtbot.com/clients/acme")],
         )
+
+    def test_client_without_a_legal_name_does_not_stop_other_highlights(self):
+        export = {
+            "pawls_file_content": [_pawls_page(["Signed", "by", "Initech", "today"])],
+            "labelled_text": [],
+        }
+        hub_clients = _FakeResponse(
+            payload={
+                "clients": [
+                    {
+                        "id": 1,
+                        "name": "Globex",
+                        "legal_name": None,
+                        "slug": "globex",
+                        "url": "https://hub.thoughtbot.com/clients/globex",
+                    },
+                    {
+                        "id": 2,
+                        "name": "Hooli",
+                        "legal_name": "  ",
+                        "slug": "hooli",
+                        "url": "https://hub.thoughtbot.com/clients/hooli",
+                    },
+                    {
+                        "id": 3,
+                        "name": "Initech",
+                        "legal_name": "Initech LLC",
+                        "slug": "initech",
+                        "url": "https://hub.thoughtbot.com/clients/initech",
+                    },
+                ],
+                "meta": {
+                    "page": 1,
+                    "per_page": 100,
+                    "total_pages": 1,
+                    "total_count": 3,
+                },
+            }
+        )
+
+        with patch("requests.get", return_value=hub_clients):
+            result = HubClientEnricher().enrich_document(
+                1, 1, cast(OpenContractDocExport, export), hub_token="hub_token"
+            )
+
+        self.assertEqual(
+            [(a["rawText"], a["link_url"]) for a in result["labelled_text"]],
+            [("Initech", "https://hub.thoughtbot.com/clients/initech")],
+        )

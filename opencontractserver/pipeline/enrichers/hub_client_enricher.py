@@ -133,7 +133,9 @@ class HubClientEnricher(BaseEnricher):
         candidates = []
         for client in clients:
             for name in (client["legal_name"], client["name"]):
-                candidates.append((name.casefold().split(), client))
+                words = (name or "").casefold().split()
+                if words:
+                    candidates.append((words, client))
         candidates.sort(key=lambda candidate: len(candidate[0]), reverse=True)
 
         new_entries: list[OpenContractsAnnotationPythonType] = []
