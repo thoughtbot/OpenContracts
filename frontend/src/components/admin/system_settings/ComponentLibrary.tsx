@@ -43,6 +43,7 @@ interface ComponentLibraryProps {
     thumbnailers: (PipelineComponentType & { className: string })[];
     llmProviders: (PipelineComponentType & { className: string })[];
     fileConverters: (PipelineComponentType & { className: string })[];
+    enrichers: (PipelineComponentType & { className: string })[];
   };
   updating: boolean;
   componentsLoading: boolean;
@@ -66,6 +67,7 @@ const FILTER_OPTIONS: { value: FilterCategory; label: string }[] = [
   { value: "thumbnailers", label: "Thumbnailers" },
   { value: "llmProviders", label: "LLM Providers" },
   { value: "fileConverters", label: "File Converters" },
+  { value: "enrichers", label: "Enrichers" },
 ];
 
 // ============================================================================
@@ -100,6 +102,7 @@ export const ComponentLibrary = memo<ComponentLibraryProps>(
         "thumbnailers",
         "llmProviders",
         "fileConverters",
+        "enrichers",
       ];
       for (const stage of stages) {
         for (const comp of components[stage]) {

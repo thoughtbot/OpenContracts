@@ -168,6 +168,15 @@ OPENAI_EMBEDDER_MAX_INPUT_CHARS = 30_000
 # first-stage ordering on reranker failure.
 RERANKER_REQUEST_TIMEOUT_SECONDS = 30
 
+# Default for Hub's client list endpoint, read by HubClientEnricher through
+# ``settings.HUB_CLIENTS_API_URL`` (env-overridable, e.g. to point at a local Hub
+# when testing; see ``config/settings/base.py``), and the page size it asks for
+# (Hub's maximum). The timeout bounds each page request; on any failure the
+# enricher adds nothing and ingestion carries on.
+DEFAULT_HUB_CLIENTS_API_URL = "https://hub.thoughtbot.com/api/clients"
+HUB_CLIENTS_PER_PAGE = 100
+HUB_REQUEST_TIMEOUT_SECONDS = 30
+
 # HTTP request timeout (seconds) for the Docling document-parser microservice.
 # Substantially larger than the embedder/reranker timeouts because parsing a
 # large PDF (ML layout + OCR) is the slowest microservice call in the pipeline;

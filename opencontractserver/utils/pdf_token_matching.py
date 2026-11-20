@@ -14,6 +14,7 @@ from opencontractserver.constants.annotations import (
 )
 from opencontractserver.types.dicts import (
     BoundingBoxPythonType,
+    OpenContractsSinglePageAnnotationType,
     PawlsPagePythonType,
     PawlsTokenPythonType,
 )
@@ -98,6 +99,22 @@ def union_bounds(
         "top": min(tops),
         "right": max(rights),
         "bottom": max(bottoms),
+    }
+
+
+def single_page_token_annotation(
+    tokens: list[PawlsTokenPythonType],
+    page_index: int,
+    indices: list[int],
+    raw_text: str,
+) -> OpenContractsSinglePageAnnotationType:
+    """Build one page's ``{"bounds", "tokensJsons", "rawText"}`` entry of a
+    TOKEN_LABEL ``annotation_json`` from the matched token ``indices`` into
+    ``tokens`` (that page's PAWLs tokens) at ``page_index``."""
+    return {
+        "bounds": union_bounds(tokens, indices),
+        "tokensJsons": [{"pageIndex": page_index, "tokenIndex": i} for i in indices],
+        "rawText": raw_text,
     }
 
 

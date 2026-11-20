@@ -76,3 +76,6 @@ WARP_INGEST_API_KEY=
 # DEFAULT_FILE_CONVERTER=opencontractserver.pipeline.file_converters.gotenberg_converter.GotenbergFileConverter
 GOTENBERG_SERVICE_URL=http://gotenberg:3000
 GOTENBERG_CONVERTER_TIMEOUT=300
+
+# Hub client enricher: uncomment to use a local Hub instead of hub.thoughtbot.com
+# HUB_CLIENTS_API_URL=http://host.docker.internal:3000/api/clients

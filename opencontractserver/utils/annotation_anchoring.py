@@ -23,13 +23,14 @@ from opencontractserver.constants.annotations import (
 )
 from opencontractserver.types.dicts import (
     BoundingBoxPythonType,
+    OpenContractsSinglePageAnnotationType,
     PawlsPagePythonType,
 )
 from opencontractserver.utils.pdf_token_matching import (
     match_title_to_tokens,
     page_text_tokens,
     select_tokens_in_region,
-    union_bounds,
+    single_page_token_annotation,
 )
 from opencontractserver.utils.text import truncate_middle
 
@@ -119,7 +120,7 @@ def _anchor_pdf(ann: dict, pawls: list[dict]) -> dict | None:
     if not anchors:
         anchors = [{"page": ann.get("page"), "bbox": ann.get("bbox"), "rawText": raw}]
 
-    annotation_json: dict[str, dict] = {}
+    annotation_json: dict[str, OpenContractsSinglePageAnnotationType] = {}
     first_page: int | None = None
     for anc in anchors:
         page_idx = anc.get("page")
@@ -128,11 +129,9 @@ def _anchor_pdf(ann: dict, pawls: list[dict]) -> dict | None:
         if not indices:
             continue
         tokens = pawls[page_idx].get("tokens", []) or []
-        annotation_json[str(page_idx)] = {
-            "bounds": union_bounds(tokens, indices),
-            "tokensJsons": [{"pageIndex": page_idx, "tokenIndex": i} for i in indices],
-            "rawText": anc_raw,
-        }
+        annotation_json[str(page_idx)] = single_page_token_annotation(
+            tokens, page_idx, indices, anc_raw
+        )
         if first_page is None:
             first_page = page_idx
 

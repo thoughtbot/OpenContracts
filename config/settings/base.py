@@ -14,6 +14,7 @@ from opencontractserver.constants.agent_memory import (
 from opencontractserver.constants.celery import CELERY_REDIS_VISIBILITY_TIMEOUT_SECONDS
 from opencontractserver.constants.document_processing import (
     DEFAULT_GOTENBERG_SERVICE_URL,
+    DEFAULT_HUB_CLIENTS_API_URL,
     DEFAULT_MAX_CORPUS_MANIFEST_SIZE_BYTES,
     DEFAULT_MAX_CORPUS_REINGEST_SOURCE_BYTES,
     DOCLING_PARSER_REQUEST_TIMEOUT_SECONDS,
@@ -1256,6 +1257,10 @@ WARP_INGEST_PARSER_TIMEOUT = env.int(
     "WARP_INGEST_PARSER_TIMEOUT", default=WARP_INGEST_PARSER_REQUEST_TIMEOUT_SECONDS
 )
 WARP_INGEST_API_KEY = env("WARP_INGEST_API_KEY", default="")
+
+# Hub client list endpoint for HubClientEnricher. Override to point at a local
+# Hub instance when testing (e.g. http://host.docker.internal:3000/api/clients).
+HUB_CLIENTS_API_URL = env("HUB_CLIENTS_API_URL", default=DEFAULT_HUB_CLIENTS_API_URL)
 
 # Gotenberg Settings - for the optional pre-parse file-to-PDF converter
 # (GotenbergFileConverter). These seed the converter's component settings via

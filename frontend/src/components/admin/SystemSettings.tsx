@@ -342,6 +342,7 @@ export const SystemSettings: React.FC = () => {
       ...componentsByStage.thumbnailers,
       ...componentsByStage.llmProviders,
       ...componentsByStage.fileConverters,
+      ...componentsByStage.enrichers,
     ]) {
       map.set(comp.className, comp);
     }
@@ -408,7 +409,7 @@ export const SystemSettings: React.FC = () => {
       if (currentEnabled.length === 0 && !enabled) {
         // Transitioning from "all enabled" to explicit list: build full list
         // from loaded components, then remove the one being disabled.
-        // Non-filetype stages (LLM providers, file converters) MUST be
+        // Non-filetype stages (LLM providers, file converters, enrichers) MUST be
         // included here — omitting one would drop that whole stage from the
         // freshly-built explicit list, silently disabling it as a side
         // effect of toggling an unrelated component.
@@ -418,6 +419,7 @@ export const SystemSettings: React.FC = () => {
           ...componentsByStage.thumbnailers,
           ...componentsByStage.llmProviders,
           ...componentsByStage.fileConverters,
+          ...componentsByStage.enrichers,
         ].map((c) => c.className);
 
         if (allPaths.length === 0) {

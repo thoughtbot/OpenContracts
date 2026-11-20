@@ -111,13 +111,14 @@ Current implementations:
 
 Enrichers inherit from [`BaseEnricher`](../../opencontractserver/pipeline/base/enricher.py) and implement `_enrich_document_impl`. An enricher is a **chainable transform** over a parsed document's `OpenContractDocExport`: it runs at ingest time, between a parser's `parse_document()` and `save_parsed_data()`, and one or more enrichers compose in sequence (each receives the previous one's output). Enrichment is additive and non-fatal — a failing enricher is skipped and never blocks ingestion.
 
-Enrichers are configured per MIME type as an **ordered list** via `PipelineSettings.preferred_enrichers` (empty by default, so enrichment is strictly opt-in).
+Enrichers are configured per MIME type as an **ordered list** via `PipelineSettings.preferred_enrichers` (empty by default, so enrichment is strictly opt-in). When `enabled_components` is a non-empty list, an assigned enricher that is missing from it is skipped without a log line (`PipelineSettings.get_preferred_enrichers`), so turn the enricher on in the Component Library too.
 
 Current implementations:
 
 | Class | Description | Source |
 |-------|-------------|--------|
 | **PdfOutlineEnricher** | Turns a PDF's embedded `/Outlines` bookmarks into hierarchical `OC_SECTION` table-of-contents annotations anchored to PAWLs tokens | [`pdf_outline_enricher.py`](../../opencontractserver/pipeline/enrichers/pdf_outline_enricher.py) |
+| **HubClientEnricher** | Downloads every page of Hub's client list (`GET /api/clients`, personal token saved as the `hub_token` secret) and adds a clickable `HUB_CLIENT` highlight wherever a client's `name` or `legal_name` appears (whole words, any case), linking to the client in Hub. No document text leaves OpenContracts. Missing/rejected token or unreachable Hub logs a warning and adds nothing. Set the `HUB_CLIENTS_API_URL` env var to point at another Hub (e.g. a local one for testing) | [`hub_client_enricher.py`](../../opencontractserver/pipeline/enrichers/hub_client_enricher.py) |
 
 ### Thumbnailers
 

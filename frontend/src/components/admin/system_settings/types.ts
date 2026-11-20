@@ -24,12 +24,14 @@ export type StageType = "parsers" | "thumbnailers";
  * converters — the latter are keyed by source-file EXTENSION and selected via
  * the single defaultFileConverter setting) and embedders (see `StageType`
  * above — still a manageable/listable component category, just not
- * per-MIME-assignable). Used by the Component Library list/filters;
+ * per-MIME-assignable), and enrichers (an ordered per-MIME chain edited in
+ * `EnricherChainEditor`; listed so their settings and secrets can be set).
+ * Used by the Component Library list/filters;
  * `StageType` remains the narrower set of stages that participate in
  * `PipelineMappingKey` filetype assignment.
  */
 export type LibraryStageType =
-  StageType | "embedders" | "llmProviders" | "fileConverters";
+  StageType | "embedders" | "llmProviders" | "fileConverters" | "enrichers";
 
 /** Type for pipeline settings keys that hold MIME-type mappings */
 export type PipelineMappingKey = "preferredParsers" | "preferredThumbnailers";

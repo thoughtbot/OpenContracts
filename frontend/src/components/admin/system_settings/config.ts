@@ -1,5 +1,12 @@
 import React from "react";
-import { FileText, Cpu, Image, Bot, FileOutput } from "lucide-react";
+import {
+  FileText,
+  Cpu,
+  Image,
+  Bot,
+  FileOutput,
+  ListOrdered,
+} from "lucide-react";
 import { StageType, LibraryStageType, PipelineMappingKey } from "./types";
 import { OS_LEGAL_COLORS } from "../../../assets/configurations/osLegalStyles";
 
@@ -41,7 +48,7 @@ export const STAGE_CONFIG: Record<
  * Display metadata for the Component Library list. Covers every library stage,
  * including ones which are NOT file-type-scoped and therefore absent from
  * {@link STAGE_CONFIG} (which carries the per-MIME `settingsKey`): LLM
- * providers, file converters, and embedders (see `types.ts` for why embedders
+ * providers, file converters, enrichers, and embedders (see `types.ts` for why embedders
  * are excluded from `STAGE_CONFIG`/`StageType`). The two filetype stages are
  * reused from `STAGE_CONFIG` to keep colors/icons in one place.
  */
@@ -86,5 +93,15 @@ export const LIBRARY_STAGE_CONFIG: Record<
     icon: FileOutput,
     title: "File Converter",
     subtitle: "Convert uploads to PDF before parsing",
+  },
+  enrichers: {
+    // Teal, distinct from the other stages (same literal-hex convention).
+    // Listed here so an enricher's settings and secrets (e.g. the Hub client
+    // enricher's token) can be set; its per-MIME chain order lives in
+    // EnricherChainEditor, not the library.
+    color: "#14B8A6",
+    icon: ListOrdered,
+    title: "Enricher",
+    subtitle: "Add annotations after parsing",
   },
 };
