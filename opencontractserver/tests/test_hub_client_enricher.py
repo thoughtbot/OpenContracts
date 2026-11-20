@@ -13,7 +13,7 @@ from unittest.mock import patch
 import pytest
 import requests
 from django.contrib.auth import get_user_model
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase, TransactionTestCase, override_settings
 
 from config.graphql.schema import schema
 from config.graphql.testing import Client
@@ -692,3 +692,28 @@ class HubClientEnricherTests(TestCase):
             [a["rawText"] for a in result["labelled_text"]],
             ["Acme Corporation,", '("Acme")'],
         )
+
+    @override_settings(HUB_CLIENTS_API_URL="http://localhost:3000/api/clients")
+    def test_client_list_is_requested_from_the_configured_hub_url(self):
+        export = {
+            "pawls_file_content": [_pawls_page(["Signed", "by", "Acme"])],
+            "labelled_text": [],
+        }
+        no_clients = _FakeResponse(
+            payload={
+                "clients": [],
+                "meta": {
+                    "page": 1,
+                    "per_page": 100,
+                    "total_pages": 1,
+                    "total_count": 0,
+                },
+            }
+        )
+
+        with patch("requests.get", return_value=no_clients) as hub_get:
+            HubClientEnricher().enrich_document(
+                1, 1, cast(OpenContractDocExport, export), hub_token="hub_token"
+            )
+
+        self.assertEqual(hub_get.call_args.args[0], "http://localhost:3000/api/clients")

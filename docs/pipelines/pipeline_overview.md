@@ -118,7 +118,7 @@ Current implementations:
 | Class | Description | Source |
 |-------|-------------|--------|
 | **PdfOutlineEnricher** | Turns a PDF's embedded `/Outlines` bookmarks into hierarchical `OC_SECTION` table-of-contents annotations anchored to PAWLs tokens | [`pdf_outline_enricher.py`](../../opencontractserver/pipeline/enrichers/pdf_outline_enricher.py) |
-| **HubClientEnricher** | Downloads every page of Hub's client list (`GET /api/clients`, personal token saved as the `hub_token` secret) and adds a clickable `HUB_CLIENT` highlight wherever a client's `name` or `legal_name` appears (whole words, any case), linking to the client in Hub. No document text leaves OpenContracts. Missing/rejected token or unreachable Hub logs a warning and adds nothing | [`hub_client_enricher.py`](../../opencontractserver/pipeline/enrichers/hub_client_enricher.py) |
+| **HubClientEnricher** | Downloads every page of Hub's client list (`GET /api/clients`, personal token saved as the `hub_token` secret) and adds a clickable `HUB_CLIENT` highlight wherever a client's `name` or `legal_name` appears (whole words, any case), linking to the client in Hub. No document text leaves OpenContracts. Missing/rejected token or unreachable Hub logs a warning and adds nothing. Set the `HUB_CLIENTS_API_URL` env var to point at another Hub (e.g. a local one for testing) | [`hub_client_enricher.py`](../../opencontractserver/pipeline/enrichers/hub_client_enricher.py) |
 
 ### Thumbnailers
 

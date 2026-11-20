@@ -13,10 +13,10 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 import requests
+from django.conf import settings
 
 from opencontractserver.constants.annotations import HUB_CLIENT_LABEL
 from opencontractserver.constants.document_processing import (
-    HUB_CLIENTS_API_URL,
     HUB_CLIENTS_PER_PAGE,
     HUB_REQUEST_TIMEOUT_SECONDS,
 )
@@ -96,7 +96,7 @@ class HubClientEnricher(BaseEnricher):
         while page_number <= total_pages:
             try:
                 response = requests.get(
-                    HUB_CLIENTS_API_URL,
+                    settings.HUB_CLIENTS_API_URL,
                     params={"page": page_number, "per_page": HUB_CLIENTS_PER_PAGE},
                     headers={
                         "Accept": "application/vnd.hub+json; version=1",
