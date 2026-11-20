@@ -40,12 +40,11 @@ from opencontractserver.types.dicts import (
     OpenContractDocExport,
     OpenContractsAnnotationPythonType,
     OpenContractsSinglePageAnnotationType,
-    TokenIdPythonType,
 )
 from opencontractserver.utils.pdf_token_matching import (
     match_title_to_tokens,
     page_text_tokens,
-    union_bounds,
+    single_page_token_annotation,
 )
 
 logger = logging.getLogger(__name__)
@@ -392,17 +391,10 @@ class PdfOutlineEnricher(BaseEnricher):
             start, end = span
             matched_token_indices = original_indices[start : end + 1]
             page_tokens = pawls_pages[p].get("tokens", []) or []
-            bounds = union_bounds(page_tokens, matched_token_indices)
             page_raw_text = " ".join(token_texts[start : end + 1])
-
-            tokens_jsons: list[TokenIdPythonType] = [
-                {"pageIndex": p, "tokenIndex": idx} for idx in matched_token_indices
-            ]
-            single_page: OpenContractsSinglePageAnnotationType = {
-                "bounds": bounds,
-                "tokensJsons": tokens_jsons,
-                "rawText": page_raw_text,
-            }
+            single_page = single_page_token_annotation(
+                page_tokens, p, matched_token_indices, page_raw_text
+            )
             annotation_json: dict[int | str, OpenContractsSinglePageAnnotationType] = {
                 str(p): single_page
             }
